@@ -65,5 +65,3 @@ npx cypress run --spec "cypress/e2e/cenários.cy.js"
 - Logs e artefatos (screenshots/videos) são gerados em `cypress/screenshots` e `cypress/videos` quando executado em modo `run`.
 
 ---
-
-Se quiser, posso atualizar o README com o link do repositório remoto e instruções de CI (GitHub Actions).
