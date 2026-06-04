@@ -7,6 +7,8 @@ O foco deste projeto não é apenas a cobertura massiva, mas a **qualidade, esta
 **Autor:** Marcos Cavalcante  
 **Ferramenta:** Cypress
 
+**Repositório remoto:** https://github.com/marcosvgc/qa-desafio-agilean-cypress-
+
 ---
 
 ## 🏗️ Decisões Técnicas e Arquitetura
@@ -35,29 +37,29 @@ A suíte cobre fluxos de cadastro, regras de dashboard/tabela e validação de m
 
 1. **Clone o repositório**
    ```bash
-   git clone <URL_DO_SEU_REPOSITORIO>
-   cd <NOME_DA_PASTA>
+   git clone https://github.com/marcosvgc/qa-desafio-agilean-cypress-.git
+   cd qa-desafio-agilean-cypress-
    ```
 
 2. **Instale as dependências**
-```bash
-npm install
-```
+   ```bash
+   npm install
+   ```
 
 3. **Abrir o Cypress (Interface gráfica)**
-```bash
-npm run cypress:open
-```
+   ```bash
+   npm run cypress:open
+   ```
 
 4. **Executar a suíte em modo headless (CI / scripts)**
-```bash
-npm test
-```
+   ```bash
+   npm test
+   ```
 
 5. **Executar um spec específico via CLI**
-```bash
-npx cypress run --spec "cypress/e2e/cenários.cy.js"
-```
+   ```bash
+   npx cypress run --spec "cypress/e2e/cenários.cy.js"
+   ```
 
 ### Dicas úteis
 - Se o browser solicitar autenticação ao fazer push para o GitHub, conclua a autenticação no navegador conforme instruído pelo Git.
