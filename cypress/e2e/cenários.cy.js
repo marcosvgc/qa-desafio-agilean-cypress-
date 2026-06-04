@@ -125,7 +125,8 @@ describe("Gerenciador de Atividades - Suíte de Testes Técnicos", () => {
       cy.criarAtividade({ nome: gerarNomeUnico('Prazo Perto'), prazo: "2025-01-01" });
 
       cy.get('[data-cy="btn-ordenar-prazo"]').click(); 
-      cy.wait(500); // Delay maroto pro react refazer a grid na tela
+      // espera a coluna de prazo renderizar após a ordenação
+      cy.get('table tbody tr td:nth-child(4)', { timeout: 10000 }).its('length').should('be.gt', 0);
 
       // Analisa a coluna de prazo validando se a lógica matematica do front tá certa
       cy.get('table tbody tr td:nth-child(4)').then(($celulas) => {
@@ -172,7 +173,7 @@ describe("Gerenciador de Atividades - Suíte de Testes Técnicos", () => {
       });
     });
 
-    it.only("Deve clonar dados exceto o status ao duplicar uma atividade", () => {
+    it("Deve clonar dados exceto o status ao duplicar uma atividade", () => {
       // crio um objeto em memória pra servir de "gabarito" dos dados originais
       const dadosOriginais = {};
 
@@ -226,7 +227,8 @@ describe("Gerenciador de Atividades - Suíte de Testes Técnicos", () => {
         cy.obterValorDoCard('[data-cy="card-cadastradas"]').should('eq', inicial);
       });
     });
-    it.only("Deve editar os dados de uma atividade com sucesso", () => {
+    
+    it("Deve editar os dados de uma atividade com sucesso", () => {
       // guardo os dados antigos e novos em constantes pra organizar a validação lá no final
       const nomeOriginal = gerarNomeUnico('Atv Original');
       const nomeEditado = gerarNomeUnico('Atv Editada');

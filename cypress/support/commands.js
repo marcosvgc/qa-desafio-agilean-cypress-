@@ -34,7 +34,10 @@ Cypress.Commands.add("abrirModalAtividade", () => {
 Cypress.Commands.add("obterValorDoCard", (seletor) => {
   return cy.get(seletor)
     .invoke('text')
-    .then((text) => parseInt(text.replace(/\D/g, ''), 10));
+    .then((text) => {
+      const num = parseInt(text.replace(/\D/g, ''), 10);
+      return Number.isNaN(num) ? 0 : num;
+    });
 });
 
 // isola o fluxo de criação pra não sujar os cenários. 
