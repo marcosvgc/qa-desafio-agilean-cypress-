@@ -1,0 +1,13 @@
+node_modules/
+.env
+.DS_Store
+.vscode/
+.idea/
+dist/
+coverage/
+npm-debug.log*
+yarn-error.log*
+package-lock.json
+cypress/screenshots/
+cypress/videos/
+cypress/videos/*

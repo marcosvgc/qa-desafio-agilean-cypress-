@@ -1,0 +1,13 @@
+{
+  "name": "technical-test",
+  "version": "1.0.0",
+  "description": "Suíte de testes automatizados com Cypress",
+  "scripts": {
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "test": "cypress run --headless"
+  },
+  "devDependencies": {
+    "cypress": "^13.0.0"
+  }
+}
