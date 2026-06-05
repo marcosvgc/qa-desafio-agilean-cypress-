@@ -1,5 +1,3 @@
-// cypress/e2e/cenários.cy.js
-
 describe("Gerenciador de Atividades - Suíte de Testes Técnicos", () => {
   
   // Carregando as variáveis de ambiente mapeadas no cypress.config.js para proteger credenciais.
@@ -73,7 +71,7 @@ describe("Gerenciador de Atividades - Suíte de Testes Técnicos", () => {
       cy.get('[data-cy="modal-atividade-nome"]').type("A".repeat(260)).invoke('val').should('have.length.at.most', 255);
       
       // Fechando o modal com ESC para limpar a tela
-      cy.get('body').type('{esc}'); 
+      cy.get('[data-cy="modal-atividade-btn-cancelar"]').should('be.visible').click(); 
       
       // Aguardo a animação do overlay sumir do DOM. Sem isso, o próximo clique pode ser interceptado e falhar.
       cy.get('[data-cy="modal-atividade-overlay"]').should('not.exist');
@@ -94,7 +92,7 @@ describe("Gerenciador de Atividades - Suíte de Testes Técnicos", () => {
     ];
 
     variacoesCadastro.forEach(({ cenario, params, seletor }) => {
-      it(`Deve cadastrar atividade com: ${cenario}`, () => {
+    it(`Deve cadastrar atividade com: ${cenario}`, () => {
         const nome = gerarNomeUnico(`Variação ${cenario}`);
         cy.criarAtividade({ nome, prazo: gerarDataDinamica(), ...params });
         
@@ -147,30 +145,55 @@ describe("Gerenciador de Atividades - Suíte de Testes Técnicos", () => {
       cy.contains('table tbody tr', nome).find('[data-cy="badge-status-rejeitada"]').should("be.visible");
     });
 
-    it("Fluxo de Ações: Duplicar, Editar e Excluir", () => {
-      //Juntei Duplicar, Editar e Excluir num único fluxo. Isso agiliza o tempo do CI/CD e evita injetar dados inúteis no DB.
-      const nomeBase = gerarNomeUnico('Ciclo Vida');
-      cy.criarAtividade({ nome: nomeBase, prazo: gerarDataDinamica(), prioridade: "Alta" });
+    it("Deve duplicar uma atividade existente", () => {
+      const nomeBase = gerarNomeUnico('Duplicar');
+      cy.criarAtividade({ nome: nomeBase, prazo: gerarDataDinamica() });
+      cy.wait('@apiCriarAtividade');
       
-      //Duplica e valida inserção
-      cy.get('[data-cy="atividade-0-btn-menu"]').click();
-      cy.get('[data-cy="atividade-0-btn-duplicar"]').click(); 
+      // Procura a linha com o nome gerado e clica no menu DENTRO dela
+      cy.contains('table tbody tr', nomeBase).within(() => {
+        cy.get('[data-cy$="-btn-menu"]').click();
+        cy.get('[data-cy$="-btn-duplicar"]').click(); 
+      });
+      
       cy.wait('@apiCriarAtividade').its('response.statusCode').should('eq', 201);
-      cy.get("table tbody tr").first().find('[data-cy="badge-status-não-iniciada"]').should("be.visible"); 
+      // Como a tabela tem ordenação, a cópia "Não Iniciada" vai para o topo ou logo abaixo
+      cy.get("table tbody tr").first().find('[data-cy="badge-status-não-iniciada"]', { timeout: 10000 }).should("be.visible"); 
+    });
 
-      //Edita a recém-duplicada
-      cy.get('[data-cy="atividade-0-btn-menu"]').click();
-      cy.get('[data-cy="atividade-0-btn-editar"]').click(); 
+    it("Deve editar a prioridade de uma atividade", () => {
+      const nomeBase = gerarNomeUnico('Editar');
+      cy.criarAtividade({ nome: nomeBase, prazo: gerarDataDinamica(), prioridade: "Alta" });
+      cy.wait('@apiCriarAtividade');
+
+      cy.contains('table tbody tr', nomeBase).within(() => {
+        cy.get('[data-cy$="-btn-menu"]').click();
+        cy.get('[data-cy$="-btn-editar"]').should('be.visible').click(); 
+      });
+
+      // NOTA DE BUG: O teste vai falhar aqui ou no select abaixo, evidenciando que o 
+      // Front-end não está preenchendo o modal corretamente com os dados da grid.
       cy.get('[data-cy="modal-atividade-prioridade"]').select('Baixa');
       cy.get('[data-cy="modal-atividade-btn-salvar"]').click();
-      cy.wait('@apiEditarAtividade');
-      cy.get("table tbody tr").first().should('contain.text', 'Baixa');
+      
+      cy.wait('@apiEditarAtividade').its('response.statusCode').should('eq', 204);
+      cy.contains('table tbody tr', nomeBase).should('contain.text', 'Baixa');
+    });
 
-      //Limpeza excluindo a cópia alterada
-      cy.get('[data-cy="atividade-0-btn-menu"]').click();
-      cy.get('[data-cy="atividade-0-btn-excluir"]').click(); 
+    it("Deve excluir uma atividade", () => {
+      const nomeBase = gerarNomeUnico('Excluir');
+      cy.criarAtividade({ nome: nomeBase, prazo: gerarDataDinamica() });
+      cy.wait('@apiCriarAtividade');
+
+      cy.contains('table tbody tr', nomeBase).within(() => {
+        cy.get('[data-cy$="-btn-menu"]').click();
+        cy.get('[data-cy$="-btn-excluir"]').click(); 
+      });
+      
       cy.wait('@apiExcluirAtividade').its('response.statusCode').should('eq', 204);
-      cy.get('table tbody tr').should('have.length.least', 1);
+      
+      // Validação suprema: A linha com aquele nome exato não existe mais no DOM
+      cy.get("table tbody tr").should('not.contain.text', nomeBase);
     });
   });
 
