@@ -11,3 +11,4 @@ package-lock.json
 cypress/screenshots/
 cypress/videos/
 cypress/videos/*
+.env
