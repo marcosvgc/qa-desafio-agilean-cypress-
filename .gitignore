@@ -1,22 +1,11 @@
-# Dependências
 node_modules/
-
-# Variáveis de Ambiente e Credenciais (CRÍTICO)
 .env
-
-# Logs
 npm-debug.log*
 yarn-error.log*
-
-# Configurações de Editores/IDEs
 .DS_Store
 .vscode/
 .idea/
-
-# Artefatos de Build e Cobertura
 dist/
 coverage/
-
-# Artefatos Visuais do Cypress (Evita inchar o repositório)
 cypress/screenshots/
 cypress/videos/
